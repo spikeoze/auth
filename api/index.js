@@ -34,17 +34,13 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 //*------------------ Routes -------------------------//
 const authRoute = require("./routes/auth");
-
-
+const postRoute = require("./routes/post");
 
 app.use("/api/auth/", authRoute);
 
-
-
+app.use("/api/post/", postRoute);
 
 //*------------------------listener-------------------------//
 

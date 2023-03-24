@@ -1,24 +1,7 @@
-import React, {
-  FormEvent,
-  ReactEventHandler,
-  useState,
-  Suspense,
-  useEffect,
-} from "react";
 import { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import axios from "axios";
 import { useRouter } from "next/router";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  UseQueryResult,
-} from "react-query";
-import { checkAuth, login, logOut } from "@/api/apifunctions";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { checkAuth, getPosts, login, logOut } from "@/api/apifunctions";
 import { useForm } from "react-hook-form";
 
 export interface User {
@@ -29,6 +12,11 @@ export interface User {
 export interface CurrentUser {
   id: number;
   username: string;
+}
+
+export interface Post {
+  title: string;
+  content: string;
 }
 
 const Home: NextPage<User> = () => {
@@ -62,17 +50,18 @@ const Home: NextPage<User> = () => {
 
   const LogoutMutation = useMutation({
     mutationFn: logOut,
-
     onSuccess: () => {
-      console.log("Logged Out");
-
       router.reload();
     },
   });
 
+  const getPostQuery = useQuery({
+    queryKey: ["Post"],
+    queryFn: getPosts,
+  });
+
   const onSubmit = (data: User) => {
     loginMutation.mutate(data);
-
     reset();
   };
 
@@ -80,16 +69,34 @@ const Home: NextPage<User> = () => {
     return (
       <div>
         {isAuthorized.isLoading ? (
-          <h5>Loading...</h5>
+          <Loading />
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
             <h4>Login</h4>
-            <input type="text" {...register("username", { required: true })} />
-            <input type="text" {...register("password", { required: true })} />
+            <input
+              className="border-slate-400 border  outline-none"
+              type="text"
+              {...register("username", { required: true })}
+            />
+            {errors.username && (
+              <span className="text-red-400">username field is required</span>
+            )}
+            <input
+              className="border-slate-400 border  outline-none"
+              type="text"
+              {...register("password", { required: true })}
+            />
+            {errors.password && (
+              <span className="text-red-400">password field is required</span>
+            )}
             {loginMutation.isLoading ? (
-              <h5>loading...</h5>
+              <Loading />
             ) : (
-              <input type="submit" value="Login" />
+              <input
+                className="border-slate-400 border rounded px-2 py-1 "
+                type="submit"
+                value="Login"
+              />
             )}
           </form>
         )}
@@ -100,7 +107,12 @@ const Home: NextPage<User> = () => {
   return (
     <>
       <h3>Welcome {isAuthorized.data.username} </h3>
-      <button onClick={() => LogoutMutation.mutate()}>LOGOUT</button>
+      <button
+        className="border-slate-400 border rounded px-2 py-1 "
+        onClick={() => LogoutMutation.mutate()}
+      >
+        LOGOUT
+      </button>
     </>
   );
 };
@@ -110,7 +122,7 @@ export const Loading = () => {
     <div role="status">
       <svg
         aria-hidden="true"
-        className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-200 fill-blue-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -128,8 +140,5 @@ export const Loading = () => {
     </div>
   );
 };
-
-
-
 
 export default Home;

@@ -1,4 +1,4 @@
-import { CurrentUser } from './../pages/index';
+import { CurrentUser } from "./../pages/index";
 import { User } from "@/pages";
 import axios from "axios";
 
@@ -7,19 +7,16 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// export const checkAuth = async ():Promise<User> => {
-//   const res = await api.get("/auth/isauthorized");
-//   if (res.status === 401) {
-//     throw new Error("Unauthorized");
-//   }
-
-//   return res.data
-// };
-
+// Auth
 export const checkAuth = async (): Promise<CurrentUser> =>
-  api.get("/auth/isauthorized").then(res => res.data);
+  api.get("/auth/isauthorized").then((res) => res.data);
 
 export const login = (user: { username: string; password: string }) =>
   api.post("/auth/login", { ...user }).then((res) => console.log(res));
 
 export const logOut = () => api.delete("/auth/logout").then((res) => res.data);
+
+// Post
+
+export const getPosts = async () =>
+  await api.get("/post").then((res) => res.data);
