@@ -1,4 +1,4 @@
-import { CurrentUser } from "./../pages/index";
+import { CurrentUser, Post, PostList } from "./../pages/index";
 import { User } from "@/pages";
 import axios from "axios";
 

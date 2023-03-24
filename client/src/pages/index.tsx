@@ -15,8 +15,13 @@ export interface CurrentUser {
 }
 
 export interface Post {
+  id: number;
   title: string;
   content: string;
+  user_id: number;
+}
+export interface PostList {
+  posts: Post[];
 }
 
 const Home: NextPage<User> = () => {
@@ -31,7 +36,7 @@ const Home: NextPage<User> = () => {
 
   const queryClient = useQueryClient();
 
-  const isAuthorized = useQuery<CurrentUser>({
+  const isAuthorized = useQuery({
     queryKey: ["authorized"],
     queryFn: checkAuth,
     retry: 0,
@@ -53,11 +58,6 @@ const Home: NextPage<User> = () => {
     onSuccess: () => {
       router.reload();
     },
-  });
-
-  const getPostQuery = useQuery({
-    queryKey: ["Post"],
-    queryFn: getPosts,
   });
 
   const onSubmit = (data: User) => {
@@ -106,9 +106,10 @@ const Home: NextPage<User> = () => {
 
   return (
     <>
-      <h3>Welcome {isAuthorized.data.username} </h3>
+      <h3 className="text-slate-400">Welcome {isAuthorized.data.username} </h3>
+      <Posts />
       <button
-        className="border-slate-400 border rounded px-2 py-1 "
+        className="border-slate-400 text-slate-400 border rounded px-2 py-1 "
         onClick={() => LogoutMutation.mutate()}
       >
         LOGOUT
@@ -116,6 +117,35 @@ const Home: NextPage<User> = () => {
     </>
   );
 };
+
+export const Posts = () => {
+  const getPostQuery = useQuery({
+    queryKey: ["Post"],
+    queryFn: getPosts,
+  });
+
+  if (getPostQuery.isLoading) return <Loading />;
+
+  console.log(getPostQuery.data);
+
+  return (
+    <>
+      {getPostQuery.data.map((post: Post) => {
+        return (
+          <div
+            className="flex flex-col gap-2 border border-slate-400 p-2 w-full m-1"
+            key={post.id}
+          >
+            <h3 className="text-md text-slate-400">{post.title}</h3>
+            <h4 className="text-sm text-slate-200">{post.content}</h4>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+
 
 export const Loading = () => {
   return (
