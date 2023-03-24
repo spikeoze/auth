@@ -13,9 +13,10 @@ export interface Post {
   title: string;
   content: string;
   user_id: number;
-}
-export interface PostList {
-  posts: Post[];
+  createdAt?: string;
+  author?: {
+    username?: string;
+  };
 }
 
 export interface newPost {

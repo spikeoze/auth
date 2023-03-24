@@ -7,9 +7,16 @@ const getPosts = async (req, res) => {
       where: {
         user_id: parseInt(req.user.id),
       },
+      include: {
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
 
-    res.status(200).json( posts );
+    res.status(200).json(posts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to get posts" });

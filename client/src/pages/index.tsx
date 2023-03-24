@@ -1,10 +1,19 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { checkAuth, getPosts, login, logOut } from "@/api/apifunctions";
+import {
+  checkAuth,
+  createPost,
+  getPosts,
+  login,
+  logOut,
+} from "@/api/apifunctions";
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs/";
+dayjs.extend(relativeTime);
 import { useForm } from "react-hook-form";
 import { Loading } from "../component/Loading";
-import { newPost, Post, User } from "./interfaces";
+import type { newPost, Post, User } from "./interfaces";
 
 const Home: NextPage<User> = () => {
   const router = useRouter();
@@ -87,12 +96,12 @@ const Home: NextPage<User> = () => {
   }
 
   return (
-    <div className="border-x border-slate-700 h-screen">
+    <div className="border-x border-slate-700 ">
       <div className="flex justify-between gap-3 py-4 px-3">
         <div className="text-slate-400">
           <h3>Welcome {isAuthorized.data.username} </h3>
           <button
-            className="border-slate-400 text-slate-400 text-sm  border rounded px-1 py-1  w-full "
+            className="border-red-400 hover:border-red-700 text-slate-400 text-sm  border rounded px-1 py-1  w-full "
             onClick={() => LogoutMutation.mutate()}
           >
             Logout
@@ -114,13 +123,47 @@ export const PostForm = () => {
     formState: { errors },
   } = useForm<newPost>();
 
-  const createPostQuery = useQuery({
-    queryKey: ['newpost'],
-    queryFn: 
-  })
+  const queryClient = useQueryClient();
 
+  const createPostQuery = useMutation({
+    mutationFn: createPost,
+
+    onMutate: (newPost) => {
+      const prevPosts = queryClient.getQueryData<Post[]>("post_list");
+
+      if (prevPosts) {
+        const newPostWithids = {
+          ...newPost,
+          id: prevPosts.length + 1,
+          user_id: prevPosts.length + 1,
+        };
+        const newData = [...prevPosts, newPostWithids];
+        queryClient.setQueryData<Post[]>("post_list", newData);
+      }
+
+      console.log("Mutate");
+
+      return { prevPosts };
+    },
+    onError: (err, newPost, context) => {
+      queryClient.setQueryData("todos", context?.prevPosts);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries("post_list");
+    },
+    onSuccess: () => {
+      console.log("Success");
+
+      queryClient.invalidateQueries({ queryKey: ["post_list"] });
+    },
+  });
+
+  const onSubmit = (data: newPost) => {
+    createPostQuery.mutate(data);
+    reset();
+  };
   return (
-    <form className="flex grow">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex grow">
       <div className="flex flex-col w-full  mx-1 border-slate-600 border text-slate-300 text-sm">
         <input
           type="text"
@@ -139,7 +182,7 @@ export const PostForm = () => {
         <input
           type="submit"
           value="Post"
-          className="border-slate-400   text-slate-400 text-sm  border rounded px-1 py-1 w-full"
+          className="border-slate-400 text-slate-400 text-sm  border rounded px-1 py-1 w-full"
         />
       </div>
     </form>
@@ -148,7 +191,7 @@ export const PostForm = () => {
 
 export const Posts = () => {
   const getPostQuery = useQuery({
-    queryKey: ["Post"],
+    queryKey: ["post_list"],
     queryFn: getPosts,
   });
 
@@ -162,8 +205,15 @@ export const Posts = () => {
             className="flex flex-col gap-2 py-4 border-y border-slate-700 p-2 w-full"
             key={post.id}
           >
-            <h3 className="text-md text-slate-400">{post.title}</h3>
-            <h4 className="text-sm text-slate-200">{post.content}</h4>
+            <div className="flex space-x-2 text-sm font-medium text-slate-500">
+              <h1>@{post.author?.username}</h1>
+              <span>·</span>
+              <h1>{dayjs(post.createdAt).toNow()}</h1>
+            </div>
+            <div>
+              <h3 className="text-md font-semibold text-slate-200">{post.title}</h3>
+              <h4 className="text-sm text-slate-200">{post.content}</h4>
+            </div>
           </div>
         );
       })}

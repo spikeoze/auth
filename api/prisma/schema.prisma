@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   username String  @unique
   password String
   Posts    Posts[]
@@ -20,11 +20,12 @@ model User {
 }
 
 model Posts {
-  id      Int    @id @default(autoincrement())
-  title   String @db.VarChar(150)
-  content String @db.VarChar(500)
-  user_id Int
-  author  User   @relation(fields: [user_id], references: [id])
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(150)
+  content   String   @db.VarChar(500)
+  user_id   Int
+  createdAt DateTime @default(now()) @map("created_at")
+  author    User     @relation(fields: [user_id], references: [id])
 
   @@map("posts")
 }
