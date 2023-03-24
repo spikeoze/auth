@@ -1,5 +1,5 @@
-import { CurrentUser, Post, PostList } from "./../pages/index";
-import { User } from "@/pages";
+import { newPost } from "./../pages/interfaces";
+import { CurrentUser, Post, PostList } from "../pages/interfaces";
 import axios from "axios";
 
 const api = axios.create({
@@ -17,6 +17,10 @@ export const login = (user: { username: string; password: string }) =>
 export const logOut = () => api.delete("/auth/logout").then((res) => res.data);
 
 // Post
-
 export const getPosts = async () =>
   await api.get("/post").then((res) => res.data);
+
+export const createPost = async (data: newPost) => {
+  const post = await api.post("/post", { ...data });
+  return post.data;
+};
