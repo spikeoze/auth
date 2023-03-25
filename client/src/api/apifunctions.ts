@@ -1,15 +1,15 @@
 import { newPost } from "./../pages/interfaces";
-import { CurrentUser, Post, PostList } from "../pages/interfaces";
+import { CurrentUser, Post } from "../pages/interfaces";
 import axios from "axios";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "http://localhost:8080/api/",
   withCredentials: true,
 });
 
 // Auth
-export const checkAuth = async (): Promise<CurrentUser> =>
-  api.get("/auth/isauthorized").then((res) => res.data);
+// export const checkAuth = async (): Promise<CurrentUser> =>
+//   api.get("/auth/isauthorized").then((res) => res.data);
 
 export const login = (user: { username: string; password: string }) =>
   api.post("/auth/login", { ...user }).then((res) => console.log(res));

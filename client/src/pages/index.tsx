@@ -1,19 +1,15 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  checkAuth,
-  createPost,
-  getPosts,
-  login,
-  logOut,
-} from "@/api/apifunctions";
+import { createPost, getPosts, login, logOut } from "@/api/apifunctions";
+import { useAuthorized } from "../../hooks/useAuthorized";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs/";
 dayjs.extend(relativeTime);
 import { useForm } from "react-hook-form";
 import { Loading } from "../component/Loading";
 import type { newPost, Post, User } from "./interfaces";
+import Image from "next/image";
 
 const Home: NextPage<User> = () => {
   const router = useRouter();
@@ -27,11 +23,7 @@ const Home: NextPage<User> = () => {
 
   const queryClient = useQueryClient();
 
-  const isAuthorized = useQuery({
-    queryKey: ["authorized"],
-    queryFn: checkAuth,
-    retry: 0,
-  });
+  const isAuthorized = useAuthorized();
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -62,33 +54,44 @@ const Home: NextPage<User> = () => {
         {isAuthorized.isLoading ? (
           <Loading />
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <h4>Login</h4>
-            <input
-              className="border-slate-400 border  outline-none"
-              type="text"
-              {...register("username", { required: true })}
-            />
-            {errors.username && (
-              <span className="text-red-400">username field is required</span>
-            )}
-            <input
-              className="border-slate-400 border  outline-none"
-              type="text"
-              {...register("password", { required: true })}
-            />
-            {errors.password && (
-              <span className="text-red-400">password field is required</span>
-            )}
-            {loginMutation.isLoading ? (
-              <Loading />
-            ) : (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col items-center  "
+          >
+            <div className="flex flex-col items-center justify-center space-y-6 border p-3 rounded mt-20 ">
+              <h4 className="text-slate-300">LOGIN</h4>
               <input
-                className="border-slate-400 border rounded px-2 py-1 "
-                type="submit"
-                value="Login"
+                className="border-slate-400 border outline-none rounded text-slate-400 px-1 "
+                type="text"
+                placeholder="Username"
+                {...register("username", { required: true })}
               />
-            )}
+              {errors.username && (
+                <span className="text-red-400 self-start text-xs">
+                  username field is required
+                </span>
+              )}
+              <input
+                className="border-slate-400 border  outline-none rounded text-slate-400 px-1 "
+                type="text"
+                placeholder="Password"
+                {...register("password", { required: true })}
+              />
+              {errors.password && (
+                <span className="text-red-400 self-start text-xs">
+                  password field is required
+                </span>
+              )}
+              {loginMutation.isLoading ? (
+                <Loading />
+              ) : (
+                <input
+                  className="border-slate-400 text-slate-400 border rounded px-2 py-1 "
+                  type="submit"
+                  value="Login"
+                />
+              )}
+            </div>
           </form>
         )}
       </div>
@@ -195,6 +198,8 @@ export const Posts = () => {
     queryFn: getPosts,
   });
 
+  const isAuthorized = useAuthorized();
+
   if (getPostQuery.isLoading) return <Loading />;
 
   return (
@@ -205,13 +210,28 @@ export const Posts = () => {
             className="flex flex-col gap-2 py-4 border-y border-slate-700 p-2 w-full"
             key={post.id}
           >
-            <div className="flex space-x-2 text-sm font-medium text-slate-500">
-              <h1>@{post.author?.username}</h1>
-              <span>·</span>
-              <h1>{dayjs(post.createdAt).toNow()}</h1>
+            <div className="flex justify-between  text-sm font-medium text-slate-500">
+              <div className="flex space-x-2">
+                <h1>@{post.author?.username}</h1>
+                <span>·</span>
+                <h1>{dayjs().to(dayjs(post.createdAt))}</h1>
+              </div>
+
+              {isAuthorized.data?.username == post.author?.username ? (
+                <div>
+                  <Image
+                    src={"trash.svg"}
+                    alt={"trash"}
+                    width={20}
+                    height={20}
+                  />
+                </div>
+              ) : null}
             </div>
             <div>
-              <h3 className="text-md font-semibold text-slate-200">{post.title}</h3>
+              <h3 className="text-md font-semibold text-slate-200">
+                {post.title}
+              </h3>
               <h4 className="text-sm text-slate-200">{post.content}</h4>
             </div>
           </div>
