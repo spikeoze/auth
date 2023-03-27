@@ -12,7 +12,7 @@ export const api = axios.create({
 //   api.get("/auth/isauthorized").then((res) => res.data);
 
 export const login = (user: { username: string; password: string }) =>
-  api.post("/auth/login", { ...user }).then((res) => console.log(res));
+  api.post("/auth/login", { ...user }).then((res) => console.log(res.data));
 
 export const registerUser = (data: User) =>
   api.post("/auth/register", { ...data }).then((res) => res.data);
