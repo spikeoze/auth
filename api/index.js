@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
+const { PrismaClient } = require('@prisma/client');
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 
 const passportConfig = require("./passportConfig");
 
@@ -12,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: "GET, POST, DELETE, PUT",
     credentials: true,
   })
@@ -23,6 +25,14 @@ app.use(
     secret: "secret",
     saveUninitialized: true,
     resave: false,
+    store: new PrismaSessionStore(
+      new PrismaClient(),
+      {
+        checkPeriod: 2 * 60 * 1000,  //ms
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined,
+      }
+    ),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },
