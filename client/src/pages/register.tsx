@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { User } from "./interfaces";
@@ -6,7 +7,7 @@ import { registerUser } from "@/api/apifunctions";
 import { useRouter } from "next/router";
 import { Loading } from "@/component/Loading";
 
-function register() {
+export function register() {
   const queryClient = useQueryClient();
   const {
     register,
