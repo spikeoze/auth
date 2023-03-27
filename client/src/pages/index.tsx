@@ -14,7 +14,7 @@ import dayjs from "dayjs/";
 dayjs.extend(relativeTime);
 import { useForm } from "react-hook-form";
 import { Loading, PageLoading } from "../component/Loading";
-import type { newPost, Post, User } from "./interfaces";
+import type { newPost, Post, User } from "../interfaces/interfaces";
 import Image from "next/image";
 import Link from "next/link";
 

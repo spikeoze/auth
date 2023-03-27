@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React from "react";
 import { useForm } from "react-hook-form";
-import { User } from "./interfaces";
+import { User } from "../interfaces/interfaces";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { registerUser } from "@/api/apifunctions";
 import { useRouter } from "next/router";

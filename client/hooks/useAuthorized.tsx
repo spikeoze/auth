@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { api } from "@/api/apifunctions";
-import { CurrentUser } from "@/pages/interfaces";
+import { CurrentUser } from "@/interfaces/interfaces";
 
 export function useAuthorized() {
   return useQuery({

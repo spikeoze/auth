@@ -1,5 +1,5 @@
-import { newPost, User } from "./../pages/interfaces";
-import { CurrentUser, Post } from "../pages/interfaces";
+import { newPost, User } from "../interfaces/interfaces";
+import { CurrentUser, Post } from "../interfaces/interfaces";
 import axios from "axios";
 
 export const api = axios.create({

@@ -1,5 +1,5 @@
 import { createPost, logOut } from "@/api/apifunctions";
-import { newPost, Post } from "@/pages/interfaces";
+import { newPost, Post } from "@/interfaces/interfaces";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
