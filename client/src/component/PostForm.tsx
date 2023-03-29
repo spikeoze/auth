@@ -1,5 +1,5 @@
 import { createPost, logOut } from "@/api/apifunctions";
-import { newPost, Post } from "@/interfaces/interfaces";
+import { newPost, Post } from "../interfaces/interfaces";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -63,7 +63,6 @@ export const PostForm = () => {
         queryClient.setQueryData<Post[]>("post_list", newData);
       }
 
-      console.log("Mutate");
 
       return { prevPosts };
     },
@@ -74,8 +73,6 @@ export const PostForm = () => {
       queryClient.invalidateQueries("post_list");
     },
     onSuccess: () => {
-      console.log("Success");
-
       queryClient.invalidateQueries({ queryKey: ["post_list"] });
     },
   });
