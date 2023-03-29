@@ -3,18 +3,27 @@ const app = express();
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
-const { PrismaClient } = require('@prisma/client');
-const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
-
+const { PrismaClient } = require("@prisma/client");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const passportConfig = require("./passportConfig");
 
 //-------------------------middleware-------------------------//
+const isProduction = process.env.NODE_ENV === "production";
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: isProduction
+        ? process.env.DATABASE_URL_PROD
+        : process.env.DATABASE_URL_DEV,
+    },
+  },
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://posting-app-mukhtar.vercel.app"],
     methods: "GET, POST, DELETE, PUT",
     credentials: true,
   })
@@ -25,14 +34,11 @@ app.use(
     secret: "secret",
     saveUninitialized: true,
     resave: false,
-    store: new PrismaSessionStore(
-      new PrismaClient(),
-      {
-        checkPeriod: 2 * 60 * 1000,  //ms
-        dbRecordIdIsSessionId: true,
-        dbRecordIdFunction: undefined,
-      }
-    ),
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },

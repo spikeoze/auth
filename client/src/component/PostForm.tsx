@@ -21,7 +21,7 @@ export const UserComponent = () => {
   if (!isAuthorized.data) return null;
 
   return (
-    <div className="flex justify-between gap-3 py-4 px-3 max-w-2xl mx-auto sticky top-0 z-50  border border-slate-600">
+    <div className="flex justify-between gap-3 py-4 px-3 w-full md:max-w-2xl mx-auto sticky top-0 z-50  border border-slate-600">
       <div className="text-slate-400">
         <h3>Welcome {isAuthorized.data?.username} </h3>
         <button

@@ -43,7 +43,6 @@ const Home: NextPage<User> = () => {
     },
   });
 
-
   const onSubmit = (data: User) => {
     loginMutation.mutate(data);
     reset();
@@ -52,7 +51,7 @@ const Home: NextPage<User> = () => {
   if (!isAuthorized.data) {
     return (
       <div className="flex flex-col items-center">
-        {isAuthorized.isLoading? (
+        {isAuthorized.isLoading ? (
           <PageLoading />
         ) : (
           <form
@@ -62,7 +61,7 @@ const Home: NextPage<User> = () => {
             <div className="flex flex-col items-center justify-center space-y-6 border p-3 rounded mt-20 ">
               <h4 className="text-slate-300">LOGIN</h4>
               <input
-                className="border-slate-400 border outline-none rounded text-slate-400 px-1 "
+                className="border-slate-400 border lowercase outline-none rounded text-slate-400 px-1 "
                 type="text"
                 placeholder="Username"
                 {...register("username", { required: true })}
@@ -73,7 +72,7 @@ const Home: NextPage<User> = () => {
                 </span>
               )}
               <input
-                className="border-slate-400 border  outline-none rounded text-slate-400 px-1 "
+                className="border-slate-400 border lowercase outline-none rounded text-slate-400 px-1 "
                 type="text"
                 placeholder="Password"
                 {...register("password", { required: true })}

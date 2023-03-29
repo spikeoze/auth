@@ -1,9 +1,19 @@
 import { newPost, User } from "../interfaces/interfaces";
 import { CurrentUser, Post } from "../interfaces/interfaces";
 import axios from "axios";
+let URL;
+
+switch (process.env.NODE_ENV) {
+  case "development":
+    URL = "http://localhost:8080/api";
+    break;
+  case "production":
+    URL = process.env.NEXT_PUBLIC_API_ROUTE;
+    break;
+}
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_ROUTE,
+  baseURL: URL,
   withCredentials: true,
 });
 

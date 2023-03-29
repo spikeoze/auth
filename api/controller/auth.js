@@ -20,10 +20,10 @@ const registerController = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 15);
-
+    const lowerUsername = username.toLowerCase();
     const user = await prisma.user.create({
       data: {
-        username,
+        username: lowerUsername,
         password: hashedPassword,
       },
     });

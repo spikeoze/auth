@@ -38,7 +38,7 @@ export function register() {
       <div className="flex flex-col items-center justify-center space-y-6 border p-3 rounded mt-20 ">
         <h4 className="text-slate-300">Register</h4>
         <input
-          className="border-slate-400 border outline-none rounded text-slate-400 px-1 "
+          className="border-slate-400 border lowercase outline-none rounded text-slate-400 px-1 "
           type="text"
           placeholder="Username"
           {...register("username", { required: true })}
@@ -49,7 +49,7 @@ export function register() {
           </span>
         )}
         <input
-          className="border-slate-400 border  outline-none rounded text-slate-400 px-1 "
+          className="border-slate-400 border lowercase  outline-none rounded text-slate-400 px-1 "
           type="text"
           placeholder="Password"
           {...register("password", { required: true })}
